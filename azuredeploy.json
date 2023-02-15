@@ -53,7 +53,7 @@
         },
         "templateLinkBase": {
             "type": "string",
-            "defaultValue": "[uri(replace(json(string(deployment().properties.templateLink)).uri,' ','%20'), '.')]"
+            "defaultValue": "[uri('https://raw.githubusercontent.com/Merkle-NE/ARM-Templates', '.')]"
         }
     },
     "functions": [

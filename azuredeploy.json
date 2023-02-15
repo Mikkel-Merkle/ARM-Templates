@@ -83,7 +83,7 @@
     },
     "resources": [
         {
-            "apiVersion": "[variables('resourcesApiVersion')]",
+            "apiVersion": "2022-12-01",
             "name": "[concat(parameters('deploymentId'), '-storageAccount')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {

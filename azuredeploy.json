@@ -116,10 +116,10 @@
                 },
                 "parameters": {
                     "cmsHostingPlanName": {
-                        "value": "[variables('storageAccountName')]"
+                        "value": "[variables('appServicePlanName')]"
                     },
                     "cmsAppName": {
-                        "value": "[parameters('deploymentId')]"
+                        "value": "[variables('appName')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"

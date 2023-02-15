@@ -79,8 +79,8 @@
     "variables": {
         "resourcesApiVersion": "2022-09-01",
         "storageAccountName": "[concat('st', Merkle.shortNamingConvention(), parameters('environment'))]",
-        "appServicePlanName": "[concat('asp', Merkle.namingConvention(), '-', parameters('environment'), 'cms')]",
-        "appName": "[concat('app', Merkle.namingConvention(), '-', parameters('environment'), 'cms')]"
+        "appServicePlanName": "[concat('asp', Merkle.namingConvention(), '-', parameters('environment'), '-cms')]",
+        "appName": "[concat('app', Merkle.namingConvention(), '-', parameters('environment'), '-cms')]"
     },
     "resources": [
         {

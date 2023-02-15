@@ -50,11 +50,12 @@
             "metadata": {
                 "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
             }
-        },
-        "templateLinkBase": {
-            "type": "string",
-            "defaultValue": "[uri('https://raw.githubusercontent.com/Merkle-NE/ARM-Templates', '.')]"
         }
+        // ,
+        // "templateLinkBase": {
+        //     "type": "string",
+        //     "defaultValue": "[uri('https://raw.githubusercontent.com/Mikkel-Merkle/ARM-Templates', '.')]"
+        // }
     },
     "functions": [
     {
@@ -88,7 +89,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(uri(parameters('templateLinkBase'), 'nested/storageAccount.json'))]"
+                    "relativePath": "nested/storageAccount.json"
                 },
                 "parameters": {
                     "storageAccountName": {

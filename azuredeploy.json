@@ -77,7 +77,7 @@
     }
     ],
     "variables": {
-        "resourcesApiVersion": "2021-09-01",
+        "resourcesApiVersion": "2022-12-01",
         "storageAccountName": "[concat('st', Merkle.shortNamingConvention(), parameters('environment'))]",
         "appServicePlanName": "[concat('asp', Merkle.namingConvention(), parameters('environment'))]"
     },

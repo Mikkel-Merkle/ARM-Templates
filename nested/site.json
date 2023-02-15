@@ -54,12 +54,12 @@
             "name": "[parameters('cmsAppName')]",
             "location": "[parameters('location')]",
             "kind": "app",
-            "identity": {
-                "type": "SystemAssigned, UserAssigned",
-                "userAssignedIdentities": {
-                    "[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/deployment')]": {}
-                }
-            },
+            // "identity": {
+            //     "type": "SystemAssigned, UserAssigned",
+            //     "userAssignedIdentities": {
+            //         "[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/deployment')]": {}
+            //     }
+            // },
             "properties": {
                 "enabled": true,
                 "hostNameSslStates": [

@@ -27,8 +27,8 @@
         //     "type": "String"
         // },
         "location": {
-        "type": "string",
-        "defaultValue": "[resourceGroup().location]"
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
         },
         "sku": {
             "type": "string",
@@ -77,13 +77,14 @@
     }
     ],
     "variables": {
-        "resourcesApiVersion": "2022-12-01",
+        "resourcesApiVersion": "2022-09-01",
         "storageAccountName": "[concat('st', Merkle.shortNamingConvention(), parameters('environment'))]",
-        "appServicePlanName": "[concat('asp', Merkle.namingConvention(), parameters('environment'))]"
+        "appServicePlanName": "[concat('asp', Merkle.namingConvention(), '-', parameters('environment'), 'cms')]",
+        "appName": "[concat('app', Merkle.namingConvention(), '-', parameters('environment'), 'cms')]"
     },
     "resources": [
         {
-            "apiVersion": "2022-09-01",
+            "apiVersion": "[variables('resourcesApiVersion')]",
             "name": "[concat(parameters('deploymentId'), '-storageAccount')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -100,6 +101,31 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "[variables('resourcesApiVersion')]",
+            "name": "[concat(parameters('deploymentId'), '-cms')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "relativePath": "nested/site.json"
+                },
+                "parameters": {
+                    "cmsHostingPlanName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "cmsAppName": {
+                        "value": "[parameters('deploymentId')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "sku": {
+                        "value": "[parameters('sku')]"
                     }
                 }
             }

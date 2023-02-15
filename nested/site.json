@@ -74,7 +74,7 @@
                         "hostType": "Repository"
                     }
                 ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('cmsHostingPlanName').name)]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('cmsHostingPlanName'))]",
                 "reserved": false,
                 "isXenon": false,
                 "hyperV": false,

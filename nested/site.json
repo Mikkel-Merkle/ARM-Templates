@@ -75,12 +75,6 @@
                     }
                 ],
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('cmsHostingPlanName'))]",
-                "reserved": false,
-                "isXenon": false,
-                "hyperV": false,
-                "vnetRouteAllEnabled": false,
-                "vnetImagePullEnabled": false,
-                "vnetContentShareEnabled": false,
                 "siteConfig": {
                     "numberOfWorkers": 1,
                     "acrUseManagedIdentityCreds": false,
@@ -89,18 +83,8 @@
                     "functionAppScaleLimit": 0,
                     "minimumElasticInstanceCount": 0
                 },
-                "scmSiteAlsoStopped": false,
-                "clientAffinityEnabled": true,
-                "clientCertEnabled": false,
-                "clientCertMode": "Required",
-                "hostNamesDisabled": false,
-                "customDomainVerificationId": "4BEEF208BA40C2DE7F28ABB3DA8B36B2673ADAADB3EDE135004A8225CEF67158",
-                "containerSize": 0,
-                "dailyMemoryTimeQuota": 0,
-                "httpsOnly": true,
-                "redundancyMode": "None",
-                "storageAccountRequired": false,
-                "keyVaultReferenceIdentity": "SystemAssigned"
+                "httpsOnly": true
+                // "keyVaultReferenceIdentity": "SystemAssigned"
             }
         },
         {

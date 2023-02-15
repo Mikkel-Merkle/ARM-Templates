@@ -35,12 +35,13 @@
         }
     },
     "variables": {        
-        "webApiVersion": "2022-09-01"
+        "webApiVersion": "2022-09-01",
+        "serverFarmApiVersion": "2022-03-01"
     },
     "resources": [
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "[variables('webApiVersion')]",
+            "apiVersion": "[variables('serverFarmApiVersion')]",
             "name": "[parameters('cmsHostingPlanName')]",
             "location": "[parameters('location')]",
             "sku": {

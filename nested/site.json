@@ -144,7 +144,7 @@
                 "scmType": "None",
                 "use32BitWorkerProcess": false,
                 "webSocketsEnabled": false,
-                "alwaysOn": true,
+                // "alwaysOn": true,
                 "managedPipelineMode": "Integrated",
                 "virtualApplications": [
                     {

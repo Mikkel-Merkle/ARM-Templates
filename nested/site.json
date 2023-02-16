@@ -35,7 +35,7 @@
         }
     },
     "variables": {        
-        "webApiVersion": "2022-09-01",
+        "webApiVersion": "2022-03-01",
         "serverFarmApiVersion": "2022-03-01"
     },
     "resources": [

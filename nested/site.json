@@ -78,7 +78,7 @@
                 "siteConfig": {
                     "numberOfWorkers": 1,
                     "acrUseManagedIdentityCreds": false,
-                    "alwaysOn": true,
+                    // "alwaysOn": true,
                     "http20Enabled": true,
                     "functionAppScaleLimit": 0,
                     "minimumElasticInstanceCount": 0

@@ -14,6 +14,18 @@
             "allowedValues": ["dev", "tst", "prd"],
             "defaultValue": "dev"
         },
+        // "storageAccounts_steuwefestivaltst_name": {
+        //     "defaultValue": "steuwefestivaltst",
+        //     "type": "String"
+        // },
+        // "sites_app_euwe_festival_portal_tst_be_name": {
+        //     "defaultValue": "app-euwe-festival-portal-[parameters('environment')]-be",
+        //     "type": "String"
+        // },
+        // "serverfarms_asp_euwe_festival_portal_shs_be_externalid": {
+        //     "defaultValue": "/subscriptions/a71da313-d2a0-4395-9150-df3d724d32d3/resourceGroups/rg-euwe-festival-shs/providers/Microsoft.Web/serverfarms/asp-euwe-festival-portal-shs-be",
+        //     "type": "String"
+        // },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
@@ -38,7 +50,7 @@
         },
         "searchSKU": {
             "type": "string",
-            "defaultValue": "free",
+            "defaultValue": "basic",
             "allowedValues": [
                 "free",
                 "basic",
@@ -184,15 +196,11 @@
                     {
                         "name": "environment",
                         "type": "string"
-                    },
-                    {
-                        "name": "deploymentId",
-                        "type": "string"
                     }
                 ],
                 "output": {
                     "type": "string",
-                    "value": "[concat(substring(parameters('deploymentId'), 2), '-', parameters('environment'))]"
+                    "value": "[concat(substring(resourceGroup().name, 2), '-', parameters('environment'))]"
                 }
             }
         }
@@ -200,19 +208,12 @@
     ],
     "variables": {
         "resourcesApiVersion": "2022-09-01",
-        "deploymentId": "[Merkle.namingConvention(parameters('deploymentId'), parameters('environment'))]",
-        "storageName": "storageAccount",
-        "cmsName": "umbraco",
-        "searchServiceEnvName": "search",
-        "appInsight": "appInsight",
-        "dbServiceName": "cms-database",
-        "boHostingPlanName": "boHostingPlan",
-        "webHostingPlanName": "webHostingPlan"
+        "deploymentId": "[Merkle.namingConvention(parameters('environment'))]"
     },
     "resources": [
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('storageName')]",
+            "name": "storageAccount",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -221,13 +222,10 @@
                 },
                 "parameters": {
                     "deploymentId": {
-                        "value": "[variables('deploymentId')]"
+                        "value": "[Merkle.namingConvention(parameters('environment'))]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
-                    },
-                    "mediaContainerName": {
-                        "value": "[parameters('mediaContainerName')]"
                     },
                     "sku": {
                         "value": "[parameters('storageSKU')]"
@@ -237,84 +235,12 @@
         },
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('dbServiceName')]",
+            "name": "cms-web-app",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "relativePath": "nested/database.json"
-                },
-                "parameters": {
-                    "dbName": {
-                        "value": "[variables('cmsName')]"
-                    },
-                    "deploymentId": {
-                        "value": "[variables('deploymentId')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "sku": {
-                        "value": "[parameters('dbSKU')]"
-                    },
-                    "sqlServerLogin": {
-                        "value": "[parameters('dbAdministratorLogin')]"
-                    },
-                    "sqlServerPassword": {
-                        "value": "[parameters('dbAdministratorLoginPassword')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('searchServiceEnvName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/search.json"
-                },
-                "parameters": {
-                    "deploymentId": {
-                        "value": "[variables('deploymentId')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "sku": {
-                        "value": "[parameters('searchSKU')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('appInsight')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/applicationInsights.json"
-                },
-                "parameters": {
-                    "deploymentId": {
-                        "value": "[variables('deploymentId')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('boHostingPlanName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/hostingPlan.json"
+                    "relativePath": "nested/site.json"
                 },
                 "parameters": {
                     "appName": {
@@ -332,43 +258,17 @@
                 }
             }
         },
-        {            
-            "condition": "[not(parameters('shareHostPlan'))]",
-            "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('webHostingPlanName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/hostingPlan.json"
-                },
-                "parameters": {
-                    "appName": {
-                        "value": "web"
-                    },
-                    "deploymentId": {
-                        "value": "[variables('deploymentId')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "sku": {
-                        "value": "[parameters('webAppSKU')]"
-                    }
-                }
-            }
-        },
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "cms-web-app",
+            "name": "cms-database",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "relativePath": "nested/umbraco.json"
+                    "relativePath": "nested/database.json"
                 },
                 "parameters": {
-                    "appName": {
+                    "dbName": {
                         "value": "umbraco"
                     },
                     "deploymentId": {
@@ -377,36 +277,17 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
-                    "connectionStringName": {
-                        "value": "[parameters('connectionStringName')]"
+                    "sku": {
+                        "value": "[parameters('sku')]"
                     },
-                    "connectionString": {
-                        "value": "[reference(variables('dbServiceName')).outputs.connectionString]"
+                    "sqlServerLogin": {
+                        "value": "[parameters('dbAdministratorLogin')]"
                     },
-                    "cmsHostingPlanName": {
-                        "value": "[reference(variables('boHostingPlanName')).outputs.hostingPlanName]"
-                    },
-                    "searchKey": {
-                        "value": "[reference(variables('searchServiceEnvName')).outputs.searchKey]"
-                    },
-                    "mediaBlobName": {
-                        "value": "[reference(variables('storageName')).outputs.mediaBlob]"
-                    },
-                    "mediaConnectionString": {
-                        "value": "[reference(variables('storageName')).outputs.connectionString]"
-                    },
-                    "searchServiceName": {
-                        "value": "[reference(variables('searchServiceEnvName')).outputs.searchServiceName]"
+                    "sqlServerPassword": {
+                        "value": "[parameters('dbAdministratorLoginPassword')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('storageName')]",
-                "[variables('appInsight')]",
-                "[variables('boHostingPlanName')]",
-                "[variables('dbServiceName')]",
-                "[variables('searchServiceEnvName')]"
-            ]
+            }
         }
         // ,
         // {

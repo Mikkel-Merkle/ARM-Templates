@@ -1,0 +1,94 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dbName": {
+            "type": "String"
+        },
+        "deploymentId": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "S0",
+            "allowedValues": [
+                "Basic",
+                "S0",
+                "S1",
+                "S2",
+                "S3",
+                "S4",
+                "S5",
+                "P1",
+                "P2"
+            ],
+            "metadata": {
+                "description": "DB Account type"
+            }
+        },
+        "sqlServerLogin": {
+            "type": "string",
+            "minLength": 1
+        },
+        "sqlServerPassword": {
+            "type": "securestring",
+            "minLength": 8
+        },
+        "sqlServerVersion": {
+            "type": "string",
+            "defaultValue": "12.0"
+        }
+    },
+    "variables": {
+        "dbApiVersion": "2022-02-01-preview",
+        "sqlServerName": "[concat('sql-', parameters('deploymentId'))]",
+        "sqlDbName": "[concat('sqldb',parameters('deploymentId'), '-', parameters('dbName'))]"
+    },
+    "resources": [
+        {
+        "type": "Microsoft.Sql/servers",
+        "apiVersion": "[variables('dbApiVersion')]",
+        "properties": {
+            "administratorLogin": "[parameters('sqlServerLogin')]",
+            "administratorLoginPassword": "[parameters('sqlServerPassword')]",
+            "version": "[parameters('sqlServerVersion')]"
+        },
+        "name": "[variables('sqlServerName')]",
+        "location": "[parameters('location')]",
+        "resources": [
+            {
+            "type": "firewallrules",
+            "apiVersion": "[variables('dbApiVersion')]",
+            "properties": {
+                "endIpAddress": "0.0.0.0",
+                "startIpAddress": "0.0.0.0"
+            },
+            "name": "AllowAllAzureIps",
+            "dependsOn": [ "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]" ]
+            }
+        ]
+        },
+        {
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "[variables('dbApiVersion')]",
+            "name": "[variables('sqlDbName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "dependsOn": [ "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]" ]
+        }
+    ],
+    "outputs": {
+        "connectionString": {
+            "type": "securestring",
+            "value":"[concat('Server=tcp:', variables('sqlServerName'), '.database.windows.net,1433;Initial Catalog=', variables('sqlDbName'), ';Persist Security Info=False;User ID=', parameters('sqlServerLogin'), ';Password=', parameters('sqlServerPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+        }
+        
+    }
+}

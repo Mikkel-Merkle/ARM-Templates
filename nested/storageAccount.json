@@ -6,38 +6,50 @@
             "type": "string",
             "defaultValue": "[resourceGroup().name]"
         },
-        "storageAccountName": {
-            "type": "String"
-        },
         "location": {
             "type": "string"
+        },
+        "mediaContainerName": {
+            "type": "string",
+            "defaultValue": "media",
+            "metadata": {
+                "description": "Name of the blob container for storing media files"
+            }
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_ZRS",
+                "Standard_GZRS",
+                "Standard_RAGZRS"
+            ],
+            "metadata": {
+                "description": "Storage Account type"
+            }
         }
     },
-    "variables": {},
+    "variables": {
+        "storageAccountName": "[concat('st', toLower(replace(parameters('deploymentId'), '-', '')))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2021-09-01",
-            "name": "[parameters('storageAccountName')]",
+            "name": "[variables('storageAccountName')]",
             "location": "[parameters('location')]",
             "sku": {
-                "name": "Standard_RAGRS"
+                "name": "[parameters('sku')]"
             },
             "kind": "StorageV2",
             "properties": {
-                "dnsEndpointType": "Standard",
-                "defaultToOAuthAuthentication": false,
                 "publicNetworkAccess": "Enabled",
                 "allowCrossTenantReplication": true,
                 "minimumTlsVersion": "TLS1_2",
                 "allowBlobPublicAccess": true,
                 "allowSharedKeyAccess": true,
-                "networkAcls": {
-                    "bypass": "AzureServices",
-                    "virtualNetworkRules": [],
-                    "ipRules": [],
-                    "defaultAction": "Allow"
-                },
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "requireInfrastructureEncryption": false,
@@ -58,13 +70,13 @@
         },
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
-            "apiVersion": "2022-09-01",
-            "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "apiVersion": "2022-05-01",
+            "name": "[concat(variables('storageAccountName'), '/default/', parameters('mediaContainerName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "sku": {
-                "name": "Standard_RAGRS",
+                "name": "[parameters('sku')]",
                 "tier": "Standard"
             },
             "properties": {
@@ -83,8 +95,23 @@
                     "enabled": true,
                     "days": 7
                 },
-                "isVersioningEnabled": false
+                "isVersioningEnabled": false,
+                "publicAccess": "Container"
             }
         }
-    ]
+    ],
+    "outputs": {
+        "connectionString": {
+            "type": "securestring",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(variables('storageAccountName'), '2019-04-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+        },
+        "mediaBlob": {
+            "type": "securestring",
+            "value": "[reference(variables('storageAccountName')).primaryEndpoints.blob]"
+        },
+        "mediaContainer": {
+            "type": "string",
+            "value": "[]"
+        }
+    }
 }

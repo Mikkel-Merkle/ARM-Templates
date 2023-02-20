@@ -1,0 +1,239 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentId": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "appName": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "hostingPlanName": {
+            "type": "string"
+        },
+        "appInsightsConnectionString": {
+            "type": "string"
+        },
+        "connectionStringName": {
+            "type": "string"
+        },
+        "connectionString": {
+            "type": "securestring"
+        },
+        "searchServiceName": {
+            "type": "string"
+        },
+        "searchKey": {
+            "type": "string"
+        },
+        "mediaBlobName": {
+            "type": "string"
+        },
+        "mediaConnectionString": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "umbracoVersion": {
+            "type": "string",
+            "defaultValue": "11.1"
+        }
+    },
+    "variables": {        
+        "webApiVersion": "2022-03-01",
+        "cmsAppName": "[concat('app', parameters('deploymentId'), parameters('appName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "[variables('webApiVersion')]",
+            "name": "[variables('cmsAppName')]",
+            "location": "[parameters('location')]",
+            "kind": "app",
+            // "identity": {
+            //     "type": "SystemAssigned, UserAssigned",
+            //     "userAssignedIdentities": {
+            //         "[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().name, '/providers/Microsoft.ManagedIdentity/userAssignedIdentities/deployment')]": {}
+            //     }
+            // },
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(variables('cmsAppName'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(variables('cmsAppName'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+                "siteConfig": {
+                    "connectionStrings": [
+                        {
+                            "name": "[parameters('connectionStringName')]",
+                            "connectionString": "[parameters('connectionString')]",
+                            "type": "SQLAzure"
+                        }
+                    ],
+                    "numberOfWorkers": 1,
+                    "acrUseManagedIdentityCreds": false,
+                    // "alwaysOn": true,
+                    "http20Enabled": true,
+                    "functionAppScaleLimit": 0,
+                    "minimumElasticInstanceCount": 0
+                },
+                "appSettings": [
+                    {
+                        "name": "My.Core.LoadBalancing.ServerRole",
+                        "value": "Replica"
+                    },
+                    {
+                        "name": "Umbraco.Examine.LuceneDirectoryFactory",
+                        "value": "Examine.LuceneEngine.Directories.TempEnvDirectoryFactory, Examine"
+                    },
+                    {
+                        "name": "Umbraco.Core.ConfigurationStatus",
+                        "value": "[parameters('umbracoVersion')]"
+                    },
+                    {
+                        "name": "Umbraco.Core.MainDom.Lock",
+                        "value": "SqlMainDomLock"
+                    },
+                    {
+                        "name": "Umbraco.Core.LocalTempStorage",
+                        "value": "EnvironmentTemp"
+                    },
+                    {
+                        "name": "My.Azure.AI.InstrumentationConnectionString",
+                        "value": "[parameters('appInsightsConnectionString')]"
+                    },
+                    {
+                        "name": "My.Azure.AI.Enabled",
+                        "value": "true"
+                    },
+                    {
+                        "name": "AzureBlobFileSystem.RootUrl:media",
+                        "value": "[parameters('mediaBlobName')]"
+                    },
+                    {
+                        "name": "AzureBlobFileSystem.ConnectionString:media",
+                        "value": "[parameters('mediaConnectionString')]"
+                    },
+                    {
+                        "name": "AzureBlobFileSystem.ContainerName:media",
+                        "value": "[parameters('mediaContainerName')]"
+                    },
+                    {
+                        "name": "ExamineX.AzureSearchServiceName",
+                        "value": "[parameters('searchServiceName')]"
+                    },
+                    {
+                        "name": "ExamineX.AzureSearchKey",
+                        "value": "[parameters('searchKey')]"
+                    },
+                    {
+                        "name": "ExamineX.EnvironmentName",
+                        "value": "[toLower(concat(parameters('environment')))]"
+                    }
+                ]
+                ,
+                "httpsOnly": true
+                // "keyVaultReferenceIdentity": "SystemAssigned"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "[variables('webApiVersion')]",
+            "name": "[concat(variables('cmsAppName'), '/ftp')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('cmsAppName'))]"
+            ],
+            "properties": {
+                "allow": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "[variables('webApiVersion')]",
+            "name": "[concat(variables('cmsAppName'), '/scm')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('cmsAppName'))]"
+            ],
+            "properties": {
+                "allow": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "[variables('webApiVersion')]",
+            "name": "[concat(variables('cmsAppName'), '/web')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('cmsAppName'))]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "remoteDebuggingVersion": "VS2019",
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": true
+                    }
+                ],
+                "http20Enabled": true,
+                "minTlsVersion": "1.2",
+                "scmMinTlsVersion": "1.2",
+                "ftpsState": "Disabled",
+                "preWarmedInstanceCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2022-03-01",
+            "name": "[concat(variables('cmsAppName'), '/', variables('cmsAppName'), '.azurewebsites.net')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('cmsAppName'))]"
+            ],
+            "properties": {
+                "siteName": "[variables('cmsAppName')]",
+                "hostNameType": "Verified"
+            }
+        }
+    ],
+    "outputs": {
+        "site": {
+            "type": "object",
+            "value": {
+                "siWebAppHostName": "[reference(concat('Microsoft.Web/sites/', variables('cmsAppName')), variables('webApiVersion')).defaultHostName]"
+            }
+        }
+    }
+}

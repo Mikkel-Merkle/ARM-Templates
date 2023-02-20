@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentId": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        }
+    },
+    "variables": {        
+        "apiVersion": "2020-02-02",
+        "appInsightName": "[concat('appi', parameters('deploymentId'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "name": "[variables('appInsightName')]",
+            "type": "microsoft.insights/components",
+            "location": "[parameters('location')]",
+            "kind": "",
+            "properties": {
+                "applicationId": "[variables('appInsightName')]",
+                "Application_Type": "web"
+            }
+        }
+    ],
+    "outputs": {
+        "connectionString": {
+            "type": "securestring",
+            "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightName')), variables('apiVersion')).ConnectionString]"
+        },
+        "resourceId": {
+            "type": "securestring",
+            "value": "[resourceId('microsoft.insights/components/', variables('appInsightName'))]"
+        }
+    }
+}

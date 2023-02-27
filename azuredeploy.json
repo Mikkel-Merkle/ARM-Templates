@@ -149,13 +149,6 @@
                 "description": "Name of connection string"
             }
         },
-        "mediaContainerName": {
-            "type": "string",
-            "defaultValue": "media",
-            "metadata": {
-                "description": "Name of the blob container for storing media files"
-            }
-        },
         "shareHostPlan": {
             "type": "bool",
             "defaultValue": false,
@@ -226,9 +219,6 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
-                    },
-                    "mediaContainerName": {
-                        "value": "[parameters('mediaContainerName')]"
                     },
                     "sku": {
                         "value": "[parameters('storageSKU')]"

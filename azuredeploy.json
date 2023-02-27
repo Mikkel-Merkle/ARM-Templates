@@ -2,9 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        // "releaseNumber": {
-        //     "type": "string"
-        // },
+        "releaseNumber": {
+            "type": "string"
+        },
         "deploymentId": {
             "type": "string",
             "defaultValue": "[resourceGroup().name]"
@@ -36,22 +36,22 @@
                 "description": "DB Account type"
             }
         },
-        "searchSKU": {
-            "type": "string",
-            "defaultValue": "free",
-            "allowedValues": [
-                "free",
-                "basic",
-                "standard",
-                "standard2",
-                "standard3",
-                "storage_optimized_l1",
-                "storage_optimized_l2"
-            ],
-            "metadata": {
-                "description": "The pricing tier of the search service you want to create (for example, basic or standard)."
-            }
-        },
+        // "searchSKU": {
+        //     "type": "string",
+        //     "defaultValue": "free",
+        //     "allowedValues": [
+        //         "free",
+        //         "basic",
+        //         "standard",
+        //         "standard2",
+        //         "standard3",
+        //         "storage_optimized_l1",
+        //         "storage_optimized_l2"
+        //     ],
+        //     "metadata": {
+        //         "description": "The pricing tier of the search service you want to create (for example, basic or standard)."
+        //     }
+        // },
         "storageSKU": {
             "type": "string",
             "defaultValue": "Standard_LRS",
@@ -111,24 +111,24 @@
                 "description": "Describes plan's pricing tier for backend"
             }
         },
-        "webAppSKUCapacity": {
-            "type": "int",
-            "defaultValue": 1,
-            "minValue": 1,
-            "maxValue": 3,
-            "metadata": {
-                "description": "Describes plan's instance count of frontend"
-            }
-        },
-        "webAppBOSKUCapacity": {
-            "type": "int",
-            "defaultValue": 1,
-            "minValue": 1,
-            "maxValue": 3,
-            "metadata": {
-                "description": "Describes plan's instance count of backend"
-            }
-        },
+        // "webAppSKUCapacity": {
+        //     "type": "int",
+        //     "defaultValue": 1,
+        //     "minValue": 1,
+        //     "maxValue": 3,
+        //     "metadata": {
+        //         "description": "Describes plan's instance count of frontend"
+        //     }
+        // },
+        // "webAppBOSKUCapacity": {
+        //     "type": "int",
+        //     "defaultValue": 1,
+        //     "minValue": 1,
+        //     "maxValue": 3,
+        //     "metadata": {
+        //         "description": "Describes plan's instance count of backend"
+        //     }
+        // },
         "dbAdministratorLogin": {
             "type": "string",
             "metadata": {
@@ -164,7 +164,7 @@
         },
         "umbracoVersion": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "11.2",
             "metadata": {
                 "description": "Umbraco version"
             }
@@ -202,8 +202,8 @@
         "resourcesApiVersion": "2022-09-01",
         "deploymentId": "[Merkle.namingConvention(parameters('deploymentId'), parameters('environment'))]",
         "storageName": "storageAccount",
-        "cmsName": "umbraco",
-        "searchServiceEnvName": "search",
+        "postFixName": "[concat('umbraco', if(empty(parameters('releaseNumber')), '', concat('-', parameters('releaseNumber'))))]",
+        // "searchServiceEnvName": "search",
         "appInsight": "appInsight",
         "dbServiceName": "cms-database",
         "boHostingPlanName": "boHostingPlan",
@@ -246,7 +246,7 @@
                 },
                 "parameters": {
                     "dbName": {
-                        "value": "[variables('cmsName')]"
+                        "value": "[variables('postFixName')]"
                     },
                     "deploymentId": {
                         "value": "[variables('deploymentId')]"
@@ -266,28 +266,28 @@
                 }
             }
         },
-        {
-            "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('searchServiceEnvName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/search.json"
-                },
-                "parameters": {
-                    "deploymentId": {
-                        "value": "[variables('deploymentId')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "sku": {
-                        "value": "[parameters('searchSKU')]"
-                    }
-                }
-            }
-        },
+        // {
+        //     "apiVersion": "[variables('resourcesApiVersion')]",
+        //     "name": "[variables('searchServiceEnvName')]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "relativePath": "nested/search.json"
+        //         },
+        //         "parameters": {
+        //             "deploymentId": {
+        //                 "value": "[variables('deploymentId')]"
+        //             },
+        //             "location": {
+        //                 "value": "[parameters('location')]"
+        //             },
+        //             "sku": {
+        //                 "value": "[parameters('searchSKU')]"
+        //             }
+        //         }
+        //     }
+        // },
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
             "name": "[variables('appInsight')]",
@@ -369,7 +369,7 @@
                 },
                 "parameters": {
                     "appName": {
-                        "value": "umbraco"
+                        "value": "[variables('postFixName')]"
                     },
                     "deploymentId": {
                         "value": "[variables('deploymentId')]"
@@ -383,11 +383,11 @@
                     "connectionString": {
                         "value": "[reference(variables('dbServiceName')).outputs.connectionString]"
                     },
-                    "cmsHostingPlanName": {
+                    "hostingPlanName": {
                         "value": "[reference(variables('boHostingPlanName')).outputs.hostingPlanName]"
                     },
-                    "searchKey": {
-                        "value": "[reference(variables('searchServiceEnvName')).outputs.searchKey]"
+                    "appInsightsConnectionString": {
+                        "value": "[reference(variables('appInsight')).outputs.connectionString]"
                     },
                     "mediaBlobName": {
                         "value": "[reference(variables('storageName')).outputs.mediaBlob]"
@@ -395,8 +395,14 @@
                     "mediaConnectionString": {
                         "value": "[reference(variables('storageName')).outputs.connectionString]"
                     },
-                    "searchServiceName": {
-                        "value": "[reference(variables('searchServiceEnvName')).outputs.searchServiceName]"
+                    "mediaContainerName": {
+                        "value": "[reference(variables('storageName')).outputs.mediaContainer]"
+                    },
+                    "environment": {
+                        "value": "[parameters('environment')]"
+                    },
+                    "umbracoVersion": {
+                        "value": "[parameters('umbracoVersion')]"
                     }
                 }
             },
@@ -404,61 +410,8 @@
                 "[variables('storageName')]",
                 "[variables('appInsight')]",
                 "[variables('boHostingPlanName')]",
-                "[variables('dbServiceName')]",
-                "[variables('searchServiceEnvName')]"
+                "[variables('dbServiceName')]"
             ]
         }
-        // ,
-        // {
-        //     "type": "Microsoft.Storage/storageAccounts/fileServices",
-        //     "apiVersion": "2022-09-01",
-        //     "name": "[concat(variables('storageAccountName'), '/default')]",
-        //     "dependsOn": [
-        //         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
-        //     ],
-        //     "sku": {
-        //         "name": "Standard_RAGRS",
-        //         "tier": "Standard"
-        //     },
-        //     "properties": {
-        //         "protocolSettings": {
-        //             "smb": {}
-        //         },
-        //         "cors": {
-        //             "corsRules": []
-        //         },
-        //         "shareDeleteRetentionPolicy": {
-        //             "enabled": true,
-        //             "days": 7
-        //         }
-        //     }
-        // }
-        // ,
-        // {
-        //     "type": "Microsoft.Web/serverfarms",
-        //     "apiVersion": "2022-03-01",
-        //     "name": "[variables('appServicePlanName')]",
-        //     "location": "[parameters('location')]",
-        //     "sku": {
-        //         "name": "[parameters('sku')]"
-        //     }
-        // },
-        // {
-        //     "type": "Microsoft.Web/sites",
-        //     "apiVersion": "2022-03-01",
-        //     "name": "[parameters('webAppName')]",
-        //     "location": "[parameters('location')]",
-        //     "identity": {
-        //         "type": "SystemAssigned"
-        //     },
-        //     "properties": {
-        //         "siteConfig": "[union(variables('configReference')[parameters('language')], createObject('minTlsVersion', '1.2', 'scmMinTlsVersion', '1.2', 'ftpsState', 'FtpsOnly'))]",
-        //         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
-        //         "httpsOnly": true
-        //     },
-        //     "dependsOn": [
-        //         "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
-        //     ]
-        // }
     ]
 }

@@ -2,11 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deploymentId": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
+        "releaseNumber": {
+            "type": "string"
         },
         "appName": {
+            "type": "string"
+        },
+        "deploymentId": {
             "type": "string",
             "defaultValue": "[resourceGroup().name]"
         },
@@ -14,23 +16,44 @@
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
         },
-        "hostingPlanName": {
-            "type": "string"
-        },
-        "appInsightsConnectionString": {
-            "type": "string"
-        },
         "connectionStringName": {
             "type": "string"
         },
         "connectionString": {
             "type": "securestring"
         },
-        "searchServiceName": {
+        "hostingPlanName": {
             "type": "string"
         },
-        "searchKey": {
+        "appInsightsConnectionString": {
             "type": "string"
+        },
+        "searchServiceAppSetting": {
+            "type": "array",
+            "defaultValue": [{
+                    "settingName": ""
+                }
+            ],
+            "metadata": {
+                "Example": [
+                    {
+                        "name": "Umbraco.Examine.LuceneDirectoryFactory",
+                        "value": "Examine.LuceneEngine.Directories.TempEnvDirectoryFactory, Examine"
+                    },
+                    {
+                        "name": "ExamineX.AzureSearchServiceName",
+                        "value": ""
+                    },
+                    {
+                        "name": "ExamineX.AzureSearchKey",
+                        "value": ""
+                    },
+                    {
+                        "name": "ExamineX.EnvironmentName",
+                        "value": ""
+                    }
+                ]
+            }
         },
         "mediaBlobName": {
             "type": "string"
@@ -38,17 +61,60 @@
         "mediaConnectionString": {
             "type": "string"
         },
+        "mediaContainerName": {
+            "type": "string",
+            "defaultValue": "media",
+            "metadata": {
+                "description": "Name of the blob container for storing media files"
+            }
+        },
         "environment": {
             "type": "string"
         },
         "umbracoVersion": {
             "type": "string",
-            "defaultValue": "11.1"
+            "defaultValue": "11.2"
         }
     },
     "variables": {        
         "webApiVersion": "2022-03-01",
-        "cmsAppName": "[concat('app', parameters('deploymentId'), parameters('appName'))]"
+        "cmsAppName": "[concat('app', parameters('deploymentId'), parameters('appName'), parameters('releaseNumber'))]",
+        "appSettings": [{
+                "name": "My.Core.LoadBalancing.ServerRole",
+                "value": "Replica"
+            },
+            {
+                "name": "Umbraco.Core.ConfigurationStatus",
+                "value": "[parameters('umbracoVersion')]"
+            },
+            {
+                "name": "Umbraco.Core.MainDom.Lock",
+                "value": "SqlMainDomLock"
+            },
+            {
+                "name": "Umbraco.Core.LocalTempStorage",
+                "value": "EnvironmentTemp"
+            },
+            {
+                "name": "My.Azure.AI.InstrumentationConnectionString",
+                "value": "[parameters('appInsightsConnectionString')]"
+            },
+            {
+                "name": "My.Azure.AI.Enabled",
+                "value": "true"
+            },
+            {
+                "name": "AzureBlobFileSystem.RootUrl:media",
+                "value": "[parameters('mediaBlobName')]"
+            },
+            {
+                "name": "AzureBlobFileSystem.ConnectionString:media",
+                "value": "[parameters('mediaConnectionString')]"
+            },
+            {
+                "name": "AzureBlobFileSystem.ContainerName:media",
+                "value": "[parameters('mediaContainerName')]"
+            }]
     },
     "resources": [
         {
@@ -93,61 +159,7 @@
                     "functionAppScaleLimit": 0,
                     "minimumElasticInstanceCount": 0
                 },
-                "appSettings": [
-                    {
-                        "name": "My.Core.LoadBalancing.ServerRole",
-                        "value": "Replica"
-                    },
-                    {
-                        "name": "Umbraco.Examine.LuceneDirectoryFactory",
-                        "value": "Examine.LuceneEngine.Directories.TempEnvDirectoryFactory, Examine"
-                    },
-                    {
-                        "name": "Umbraco.Core.ConfigurationStatus",
-                        "value": "[parameters('umbracoVersion')]"
-                    },
-                    {
-                        "name": "Umbraco.Core.MainDom.Lock",
-                        "value": "SqlMainDomLock"
-                    },
-                    {
-                        "name": "Umbraco.Core.LocalTempStorage",
-                        "value": "EnvironmentTemp"
-                    },
-                    {
-                        "name": "My.Azure.AI.InstrumentationConnectionString",
-                        "value": "[parameters('appInsightsConnectionString')]"
-                    },
-                    {
-                        "name": "My.Azure.AI.Enabled",
-                        "value": "true"
-                    },
-                    {
-                        "name": "AzureBlobFileSystem.RootUrl:media",
-                        "value": "[parameters('mediaBlobName')]"
-                    },
-                    {
-                        "name": "AzureBlobFileSystem.ConnectionString:media",
-                        "value": "[parameters('mediaConnectionString')]"
-                    },
-                    {
-                        "name": "AzureBlobFileSystem.ContainerName:media",
-                        "value": "[parameters('mediaContainerName')]"
-                    },
-                    {
-                        "name": "ExamineX.AzureSearchServiceName",
-                        "value": "[parameters('searchServiceName')]"
-                    },
-                    {
-                        "name": "ExamineX.AzureSearchKey",
-                        "value": "[parameters('searchKey')]"
-                    },
-                    {
-                        "name": "ExamineX.EnvironmentName",
-                        "value": "[toLower(concat(parameters('environment')))]"
-                    }
-                ]
-                ,
+                "appSettings": "[union(variables('appSettings'), parameters('searchServiceAppSetting'))]",
                 "httpsOnly": true
                 // "keyVaultReferenceIdentity": "SystemAssigned"
             }

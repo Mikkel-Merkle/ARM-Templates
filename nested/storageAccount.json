@@ -9,13 +9,6 @@
         "location": {
             "type": "string"
         },
-        "mediaContainerName": {
-            "type": "string",
-            "defaultValue": "media",
-            "metadata": {
-                "description": "Name of the blob container for storing media files"
-            }
-        },
         "sku": {
             "type": "string",
             "defaultValue": "Standard_LRS",
@@ -32,7 +25,8 @@
         }
     },
     "variables": {
-        "storageAccountName": "[concat('st', toLower(replace(parameters('deploymentId'), '-', '')))]"
+        "storageAccountName": "[concat('st', toLower(replace(parameters('deploymentId'), '-', '')))]",
+        "mediaContainerName": "media"
     },
     "resources": [
         {
@@ -71,7 +65,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
             "apiVersion": "2022-05-01",
-            "name": "[concat(variables('storageAccountName'), '/default/', parameters('mediaContainerName'))]",
+            "name": "[concat(variables('storageAccountName'), '/default/', variables('mediaContainerName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
@@ -111,7 +105,7 @@
         },
         "mediaContainer": {
             "type": "string",
-            "value": "[]"
+            "value": "[variables('mediaContainerName')]"
         }
     }
 }

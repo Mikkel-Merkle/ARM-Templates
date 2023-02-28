@@ -361,9 +361,6 @@
                     "relativePath": "nested/umbraco.json"
                 },
                 "parameters": {
-                    "releaseNumber": {
-                        "value": "[parameters('releaseNumber')]"
-                    },
                     "appName": {
                         "value": "[variables('postFixName')]"
                     },
@@ -393,9 +390,6 @@
                     },
                     "mediaContainerName": {
                         "value": "[reference(variables('storageName')).outputs.mediaContainer]"
-                    },
-                    "environment": {
-                        "value": "[parameters('environment')]"
                     },
                     "umbracoVersion": {
                         "value": "[parameters('umbracoVersion')]"

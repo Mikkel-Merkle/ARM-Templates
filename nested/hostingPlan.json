@@ -53,7 +53,7 @@
     ],
     "outputs": {
         "hostingPlanName": {
-            "type": "object",
+            "type": "string",
             "value": "[variables('cmsHostingPlanName')]"
         }
     }

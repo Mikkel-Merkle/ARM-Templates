@@ -139,7 +139,7 @@
         },
         "dbAdministratorLoginPassword": {
             "type": "securestring",
-            "defaultValue": "12345678canthackthis",
+            "defaultValue": "Y0ucanthackthis!Hammertime.",
             "metadata": {
                 "description": "Database admin user password"
             }

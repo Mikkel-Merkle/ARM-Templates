@@ -132,12 +132,14 @@
         // },
         "dbAdministratorLogin": {
             "type": "string",
+            "defaultValue": "admin",
             "metadata": {
                 "description": "SQL Azure DB administrator user login"
             }
         },
         "dbAdministratorLoginPassword": {
             "type": "securestring",
+            "defaultValue": "12345678",
             "metadata": {
                 "description": "Database admin user password"
             }
@@ -359,6 +361,9 @@
                     "relativePath": "nested/umbraco.json"
                 },
                 "parameters": {
+                    "releaseNumber": {
+                        "value": "[parameters('releaseNumber')]"
+                    },
                     "appName": {
                         "value": "[variables('postFixName')]"
                     },

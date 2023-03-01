@@ -178,11 +178,11 @@
             "namingConvention": {
                 "parameters": [
                     {
-                        "name": "environment",
+                        "name": "deploymentId",
                         "type": "string"
                     },
                     {
-                        "name": "deploymentId",
+                        "name": "environment",
                         "type": "string"
                     }
                 ],

@@ -60,38 +60,40 @@
                     "keySource": "Microsoft.Storage"
                 },
                 "accessTier": "Hot"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices",
-            "apiVersion": "2022-05-01",
-            "name": "[concat(variables('storageAccountName'), '/', variables('mediaContainerName'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
-            ],
-            "sku": {
-                "name": "[parameters('sku')]",
-                "tier": "Standard"
             },
-            "properties": {
-                "changeFeed": {
-                    "enabled": false
-                },
-                "restorePolicy": {
-                    "enabled": false
-                },
-                "containerDeleteRetentionPolicy": {
-                    "enabled": true,
-                    "days": 7
-                },
-                "deleteRetentionPolicy": {
-                    "allowPermanentDelete": false,
-                    "enabled": true,
-                    "days": 7
-                },
-                "isVersioningEnabled": false,
-                "publicAccess": "Container"
-            }
+            "resources": [
+                {
+                    "type": "blobServices",
+                    "apiVersion": "2022-05-01",
+                    "name": "[variables('mediaContainerName')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                    ],
+                    "sku": {
+                        "name": "[parameters('sku')]",
+                        "tier": "Standard"
+                    },
+                    "properties": {
+                        "changeFeed": {
+                            "enabled": false
+                        },
+                        "restorePolicy": {
+                            "enabled": false
+                        },
+                        "containerDeleteRetentionPolicy": {
+                            "enabled": true,
+                            "days": 7
+                        },
+                        "deleteRetentionPolicy": {
+                            "allowPermanentDelete": false,
+                            "enabled": true,
+                            "days": 7
+                        },
+                        "isVersioningEnabled": false,
+                        "publicAccess": "Container"
+                    }
+                }                
+            ]
         }
     ],
     "outputs": {

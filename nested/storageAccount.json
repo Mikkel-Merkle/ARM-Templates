@@ -69,10 +69,6 @@
                     "dependsOn": [
                         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
                     ],
-                    "sku": {
-                        "name": "[parameters('sku')]",
-                        "tier": "Standard"
-                    },
                     "properties": {
                         "changeFeed": {
                             "enabled": false
@@ -89,8 +85,7 @@
                             "enabled": true,
                             "days": 7
                         },
-                        "isVersioningEnabled": false,
-                        "publicAccess": "Container"
+                        "isVersioningEnabled": false
                     }
                 }                
             ]

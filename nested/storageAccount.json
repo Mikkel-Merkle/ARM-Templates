@@ -25,13 +25,14 @@
         }
     },
     "variables": {
+        "apiVersion": "2022-09-01",
         "storageAccountName": "[concat('st', toLower(replace(parameters('deploymentId'), '-', '')))]",
         "mediaContainerName": "media"
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2021-09-01",
+            "apiVersion": "[variables('apiVersion')]",
             "name": "[variables('storageAccountName')]",
             "location": "[parameters('location')]",
             "sku": {
@@ -64,8 +65,8 @@
             "resources": [
                 {
                     "type": "blobServices",
-                    "apiVersion": "2022-05-01",
-                    "name": "[variables('mediaContainerName')]",
+                    "apiVersion": "[variables('apiVersion')]",
+                    "name": "default",
                     "dependsOn": [
                         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
                     ],
@@ -86,7 +87,21 @@
                             "days": 7
                         },
                         "isVersioningEnabled": false
-                    }
+                    },
+                    "resources": [
+                        {
+                            "type": "containers",
+                            "apiVersion": "[variables('apiVersion')]",
+                            "name": "[variables('mediaContainerName')]",
+                            "properties": {
+                                "publicAccess": "Container"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]",
+                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                            ]
+                        }
+                    ]
                 }                
             ]
         }

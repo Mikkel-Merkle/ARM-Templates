@@ -46,7 +46,7 @@
     },
     "variables": {
         "dbApiVersion": "2022-02-01-preview",
-        "sqlServerName": "[concat('sql-', parameters('deploymentId'))]",
+        "sqlServerName": "[concat('sql', parameters('deploymentId'))]",
         "sqlDbName": "[concat('sqldb',parameters('deploymentId'), '-', parameters('dbName'))]"
     },
     "resources": [

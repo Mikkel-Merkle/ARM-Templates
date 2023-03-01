@@ -38,7 +38,7 @@
     },
     "variables": {
         "serverFarmApiVersion": "2022-03-01",
-        "cmsHostingPlanName": "[concat('asp', parameters('deploymentId'), parameters('appName'))]"
+        "cmsHostingPlanName": "[concat('asp', parameters('deploymentId'), '-', parameters('appName'))]"
     },
     "resources": [
         {

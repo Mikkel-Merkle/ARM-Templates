@@ -374,7 +374,7 @@
                         "value": "[parameters('connectionStringName')]"
                     },
                     "connectionString": {
-                        "value": "[reference(variables('dbServiceName')).outputs.connectionString.value]"
+                        "value": ""//"[reference(variables('dbServiceName')).outputs.connectionString.value]"
                     },
                     "hostingPlanName": {
                         "value": ""//"[reference(variables('boHostingPlanName')).outputs.hostingPlanName.value]"

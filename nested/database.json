@@ -88,7 +88,6 @@
         "connectionString": {
             "type": "securestring",
             "value":"[concat('Server=tcp:', variables('sqlServerName'), '.database.windows.net,1433;Initial Catalog=', variables('sqlDbName'), ';Persist Security Info=False;User ID=', parameters('sqlServerLogin'), ';Password=', parameters('sqlServerPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
-        }
-        
+        }        
     }
 }

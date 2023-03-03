@@ -374,22 +374,22 @@
                         "value": "[parameters('connectionStringName')]"
                     },
                     "connectionString": {
-                        "value": "[reference(variables('dbServiceName')).outputs.connectionString]"
+                        "value": "[reference(variables('dbServiceName')).outputs.connectionString.value]"
                     },
                     "hostingPlanName": {
-                        "value": "[reference(variables('boHostingPlanName')).outputs.hostingPlanName]"
+                        "value": "[reference(variables('boHostingPlanName')).outputs.hostingPlanName.value]"
                     },
                     "appInsightsConnectionString": {
-                        "value": "[reference(variables('appInsight')).outputs.connectionString]"
+                        "value": "[reference(variables('appInsight')).outputs.connectionString.value]"
                     },
                     "mediaBlobName": {
-                        "value": "[reference(variables('storageName')).outputs.mediaBlob]"
+                        "value": "[reference(variables('storageName')).outputs.mediaBlob.value]"
                     },
                     "mediaConnectionString": {
-                        "value": "[reference(variables('storageName')).outputs.connectionString]"
+                        "value": "[reference(variables('storageName')).outputs.connectionString.value]"
                     },
                     "mediaContainerName": {
-                        "value": "[reference(variables('storageName')).outputs.mediaContainer]"
+                        "value": "[reference(variables('storageName')).outputs.mediaContainer.value]"
                     },
                     "umbracoVersion": {
                         "value": "[parameters('umbracoVersion')]"

@@ -29,13 +29,22 @@
         }
     ],
     "outputs": {
-        "connectionString": {
-            "type": "securestring",
-            "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightName')), variables('apiVersion')).ConnectionString]"
+        "name": {
+            "type": "string",
+            "value": "[variables('appInsightName')]"
         },
-        "resourceId": {
-            "type": "securestring",
-            "value": "[resourceId('microsoft.insights/components/', variables('appInsightName'))]"
+        "apiVersion": {
+            "type": "string",
+            "value": "[variables('apiVersion')]"
         }
+        // ,
+        // "connectionString": {
+        //     "type": "securestring",
+        //     "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightName')), variables('apiVersion')).ConnectionString]"
+        // },
+        // "resourceId": {
+        //     "type": "securestring",
+        //     "value": "[resourceId('microsoft.insights/components/', variables('appInsightName'))]"
+        // }
     }
 }

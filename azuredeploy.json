@@ -445,6 +445,9 @@
                     "storageAccountApiVersion": {
                         "value": "[reference(variables('storageDeploymentName')).outputs.apiVersion.value]"
                     },
+                    "storageAccountConnectionString": {
+                        "value": "[reference(variables('storageDeploymentName')).outputs.connectionString.value]"
+                    },
                     "mediaContainerName": {
                         "value": "[variables('mediaContainerName')]"
                     },
@@ -454,7 +457,7 @@
                 }
             },
             "dependsOn": [
-                // "[variables('storageDeploymentName')]",
+                "[variables('storageDeploymentName')]",
                 "[variables('appInsightDeploymentName')]",
                 "[variables('boHostingPlanDeploymentName')]",
                 "[variables('dbServiceDeploymentName')]"

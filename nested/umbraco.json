@@ -68,6 +68,9 @@
         "storageAccountApiVersion": {
             "type": "string"
         },
+        "storageAccountConnectionString": {
+            "type": "string"
+        },
         "mediaContainerName": {
             "type": "string",
             "defaultValue": "media",
@@ -152,7 +155,7 @@
                         },
                         {
                             "name": "AzureBlobFileSystem.ConnectionString:media",
-                            "value": ""//"[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'),';AccountKey=',listKeys(parameters('storageAccountName'), parameters('storageAccountApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                            "value": "[parameters('storageAccountConnectionString')]"
                         },
                         {
                             "name": "AzureBlobFileSystem.ContainerName:media",

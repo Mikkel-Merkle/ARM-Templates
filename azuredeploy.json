@@ -433,7 +433,7 @@
                         "value": ""//"[reference(variables('storageDeploymentName')).outputs.mediaBlob.value]"
                     },
                     "storageAccountName": {
-                        "value": "[variables('storageAccountName')]"
+                        "value": ""//"[variables('storageAccountName')]"
                     },
                     "storageAccountApiVersion": {
                         "value": ""//"[reference(variables('storageDeploymentName')).outputs.apiVersion.value]"
@@ -447,7 +447,7 @@
                 }
             },
             "dependsOn": [
-                "[variables('storageDeploymentName')]",
+                // "[variables('storageDeploymentName')]",
                 "[variables('appInsightDeploymentName')]",
                 "[variables('boHostingPlanDeploymentName')]",
                 "[variables('dbServiceDeploymentName')]"

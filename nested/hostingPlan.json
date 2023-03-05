@@ -2,14 +2,14 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deploymentId": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
-        },
-        "appName": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
-        },
+        // "deploymentId": {
+        //     "type": "string",
+        //     "defaultValue": "[resourceGroup().name]"
+        // },
+        // "appName": {
+        //     "type": "string",
+        //     "defaultValue": "[resourceGroup().name]"
+        // },
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
@@ -36,8 +36,8 @@
             }
         },
         "cmsHostingPlanName": {
-            "type": "string",
-            "defaultValue": "[concat('asp', parameters('deploymentId'), '-', parameters('appName'))]"
+            "type": "string"
+            // "defaultValue": "[concat('asp', parameters('deploymentId'), '-', parameters('appName'))]"
         }
     },
     "variables": {

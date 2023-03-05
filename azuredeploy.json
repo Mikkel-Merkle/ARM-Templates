@@ -213,19 +213,19 @@
         "mediaContainerName": "media",
 
         // Databases
-        "dbServerName": "[concat('sql-', variables('deploymentId'))]",
+        "dbServerName": "[concat('sql', variables('deploymentId'))]",
         "dbName": "[concat('sqldb-umbraco', variables('deploymentId'))]",
 
         // Hostin plan
-        // "hostingPlanName": "[concat('plan-', variables('deploymentId'))]",
-        "hostingPlanBOName": "[concat('plan-', variables('deploymentId'), '-', variables('postFixName'))]",
+        // "hostingPlanName": "concat('asp', parameters('deploymentId'), '-', parameters('appName'))",
+        "hostingPlanBOName": "[concat('asp', variables('deploymentId'), '-', variables('postFixName'))]",
 
         // Web App
-        "webAppFEName": "[concat('app-', variables('deploymentId'))]",
-        "webAppBOName": "[concat('app-', variables('deploymentId'), variables('postFixName'))]",
+        "webAppFEName": "[concat('app', variables('deploymentId'))]",
+        "webAppBOName": "[concat('app', variables('deploymentId'), variables('postFixName'))]",
 
         // Application Insights
-        "appInsightName": "[concat('appi-', variables('deploymentId'))]",
+        "appInsightName": "[concat('appi', variables('deploymentId'))]",
 
         // Azure Search
         "searchServiceName": "[concat('srch-', variables('deploymentId'))]"
@@ -357,17 +357,20 @@
                     "relativePath": "nested/hostingPlan.json"
                 },
                 "parameters": {
-                    "appName": {
-                        "value": "umbraco"
-                    },
-                    "deploymentId": {
-                        "value": "[variables('deploymentId')]"
-                    },
+                    // "appName": {
+                    //     "value": "umbraco"
+                    // },
+                    // "deploymentId": {
+                    //     "value": "[variables('deploymentId')]"
+                    // },
                     "location": {
                         "value": "[parameters('location')]"
                     },
                     "sku": {
                         "value": "[parameters('webAppBOSKU')]"
+                    },
+                    "cmsHostingPlanName": {
+                        "value": "[variables('hostingPlanBOName')]"
                     }
                 }
             }

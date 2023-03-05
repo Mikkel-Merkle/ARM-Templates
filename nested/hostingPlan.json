@@ -35,7 +35,7 @@
                 "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
             }
         },
-        "cmsHostingPlanName": {
+        "hostingPlanName": {
             "type": "string"
             // "defaultValue": "[concat('asp', parameters('deploymentId'), '-', parameters('appName'))]"
         }
@@ -47,7 +47,7 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "[variables('serverFarmApiVersion')]",
-            "name": "[parameters('cmsHostingPlanName')]",
+            "name": "[parameters('hostingPlanName')]",
             "location": "[parameters('location')]",
             "sku": {
                 "name": "[parameters('sku')]"

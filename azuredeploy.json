@@ -197,6 +197,7 @@
     "variables": {
         "resourcesApiVersion": "2022-09-01",
         "deploymentId": "[Merkle.namingConvention(parameters('deploymentId'), parameters('environment'))]",
+        "webPostFixName": "[concat('web', if(empty(parameters('releaseNumber')), '', concat('-', parameters('releaseNumber'))))]",
         "postFixName": "[concat('umbraco', if(empty(parameters('releaseNumber')), '', concat('-', parameters('releaseNumber'))))]",
         // "searchServiceEnvName": "search",
         "storageDeploymentName": "storageAccount",
@@ -217,7 +218,7 @@
         "dbName": "[concat('sqldb-umbraco', variables('deploymentId'))]",
 
         // Hostin plan
-        // "hostingPlanName": "concat('asp', parameters('deploymentId'), '-', parameters('appName'))",
+        "hostingPlanWebName": "[concat('asp', variables('deploymentId'), '-', variables('webPostFixName'))]",
         "hostingPlanBOName": "[concat('asp', variables('deploymentId'), '-', variables('postFixName'))]",
 
         // Web App
@@ -369,8 +370,8 @@
                     "sku": {
                         "value": "[parameters('webAppBOSKU')]"
                     },
-                    "cmsHostingPlanName": {
-                        "value": "[variables('hostingPlanBOName')]"
+                    "hostingPlanName": {
+                        "value": "[variables('hostingPlanWebName')]"
                     }
                 }
             }
@@ -386,17 +387,20 @@
                     "relativePath": "nested/hostingPlan.json"
                 },
                 "parameters": {
-                    "appName": {
-                        "value": "web"
-                    },
-                    "deploymentId": {
-                        "value": "[variables('deploymentId')]"
-                    },
+                    // "appName": {
+                    //     "value": "web"
+                    // },
+                    // "deploymentId": {
+                    //     "value": "[variables('deploymentId')]"
+                    // },
                     "location": {
                         "value": "[parameters('location')]"
                     },
                     "sku": {
                         "value": "[parameters('webAppSKU')]"
+                    },
+                    "hostingPlanName": {
+                        "value": "[variables('hostingPlanBOName')]"
                     }
                 }
             }

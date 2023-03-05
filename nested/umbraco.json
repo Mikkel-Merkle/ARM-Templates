@@ -22,8 +22,15 @@
         "hostingPlanName": {
             "type": "string"
         },
-        "appInsightsConnectionString": {
+        // "appInsightName": {
+        //     "type": "string"
+        // },
+        // "appInsightApiVersion": {
+        //     "type": "string"
+        // },
+        "appInsightConnectionString": {
             "type": "string"
+            // "defaultValue": "[reference(resourceId('microsoft.insights/components/', parameters('appInsightName')), parameters('appInsightApiVersion')).ConnectionString]"
         },
         "searchServiceAppSetting": {
             "type": "array",
@@ -55,7 +62,10 @@
         "mediaBlobName": {
             "type": "string"
         },
-        "mediaConnectionString": {
+        "storageAccountName": {
+            "type": "string"
+        },
+        "storageAccountApiVersion": {
             "type": "string"
         },
         "mediaContainerName": {
@@ -72,43 +82,8 @@
     },
     "variables": {        
         "webApiVersion": "2022-03-01",
-        "cmsAppName": "[concat('app', parameters('deploymentId'), '-', parameters('appName'))]",
-        "appSettings": [{
-                "name": "My.Core.LoadBalancing.ServerRole",
-                "value": "Replica"
-            },
-            {
-                "name": "Umbraco.Core.ConfigurationStatus",
-                "value": "[parameters('umbracoVersion')]"
-            },
-            {
-                "name": "Umbraco.Core.MainDom.Lock",
-                "value": "SqlMainDomLock"
-            },
-            {
-                "name": "Umbraco.Core.LocalTempStorage",
-                "value": "EnvironmentTemp"
-            },
-            {
-                "name": "My.Azure.AI.InstrumentationConnectionString",
-                "value": "[parameters('appInsightsConnectionString')]"
-            },
-            {
-                "name": "My.Azure.AI.Enabled",
-                "value": "true"
-            },
-            {
-                "name": "AzureBlobFileSystem.RootUrl:media",
-                "value": "[parameters('mediaBlobName')]"
-            },
-            {
-                "name": "AzureBlobFileSystem.ConnectionString:media",
-                "value": "[parameters('mediaConnectionString')]"
-            },
-            {
-                "name": "AzureBlobFileSystem.ContainerName:media",
-                "value": "[parameters('mediaContainerName')]"
-            }]
+        "cmsAppName": "[concat('app', parameters('deploymentId'), '-', parameters('appName'))]"
+        
     },
     "resources": [
         {
@@ -153,7 +128,44 @@
                     "functionAppScaleLimit": 0,
                     "minimumElasticInstanceCount": 0
                 },
-                "appSettings": "[union(variables('appSettings'), parameters('searchServiceAppSetting'))]",
+                "appSettings": [
+                    {
+                        "name": "My.Core.LoadBalancing.ServerRole",
+                        "value": "Replica"
+                    },
+                    {
+                        "name": "Umbraco.Core.ConfigurationStatus",
+                        "value": "[parameters('umbracoVersion')]"
+                    },
+                    {
+                        "name": "Umbraco.Core.MainDom.Lock",
+                        "value": "SqlMainDomLock"
+                    },
+                    {
+                        "name": "Umbraco.Core.LocalTempStorage",
+                        "value": "EnvironmentTemp"
+                    },
+                    {
+                        "name": "My.Azure.AI.InstrumentationConnectionString",
+                        "value": "[parameters('appInsightConnectionString')]"
+                    },
+                    {
+                        "name": "My.Azure.AI.Enabled",
+                        "value": "true"
+                    },
+                    {
+                        "name": "AzureBlobFileSystem.RootUrl:media",
+                        "value": "[parameters('mediaBlobName')]"
+                    },
+                    {
+                        "name": "AzureBlobFileSystem.ConnectionString:media",
+                        "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'),';AccountKey=',listKeys(parameters('storageAccountName'), parameters('storageAccountApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                    },
+                    {
+                        "name": "AzureBlobFileSystem.ContainerName:media",
+                        "value": "[parameters('mediaContainerName')]"
+                    }
+                ],
                 "httpsOnly": true
                 // "keyVaultReferenceIdentity": "SystemAssigned"
             }

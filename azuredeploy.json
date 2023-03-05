@@ -197,18 +197,50 @@
     "variables": {
         "resourcesApiVersion": "2022-09-01",
         "deploymentId": "[Merkle.namingConvention(parameters('deploymentId'), parameters('environment'))]",
-        "storageName": "storageAccount",
         "postFixName": "[concat('umbraco', if(empty(parameters('releaseNumber')), '', concat('-', parameters('releaseNumber'))))]",
         // "searchServiceEnvName": "search",
-        "appInsight": "appInsight",
-        "dbServiceName": "cms-database",
-        "boHostingPlanName": "boHostingPlan",
-        "webHostingPlanName": "webHostingPlan"
+        "storageDeploymentName": "storageAccount",
+        "dbServiceDeploymentName": "cms-database",
+        "boHostingPlanDeploymentName": "boHostingPlan",
+        "webHostingPlanDeploymentName": "webHostingPlan",
+        "boWebAppDeploymentName": "cms-web-app",
+        "feWebAppDeploymentName": "next-web-app",
+        "appInsightDeploymentName": "appInsight",
+
+        /// Naming conventions
+        // Storage account
+        "storageAccountName": "[concat('st', replace(variables('deploymentId'), '-', ''))]",
+        "mediaContainerName": "media",
+
+        // Databases
+        "dbServerName": "[concat('sql-', variables('deploymentId'))]",
+        "dbName": "[concat('sqldb-umbraco', variables('deploymentId'))]",
+
+        // Hostin plan
+        // "hostingPlanName": "[concat('plan-', variables('deploymentId'))]",
+        "hostingPlanBOName": "[concat('plan-', variables('deploymentId'), '-', variables('postFixName'))]",
+
+        // Web App
+        "webAppFEName": "[concat('app-', variables('deploymentId'))]",
+        "webAppBOName": "[concat('app-', variables('deploymentId'), variables('postFixName'))]",
+
+        // Application Insights
+        "appInsightName": "[concat('appi-', variables('deploymentId'))]",
+
+        // Azure Search
+        "searchServiceName": "[concat('srch-', variables('deploymentId'))]",        
+        // "searchServiceEnvName": "[concat(variables('searchServiceName'),'-',parameters('environment'))]",
+
+        // "connectionString": "[concat('Server=tcp:', variables('dbServerName'), '.database.windows.net,1433;Initial Catalog=', variables('dbName'), ';Persist Security Info=False;User ID=', parameters('dbAdministratorLogin'), ';Password=', parameters('dbAdministratorLoginPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
+        // "resourceTags": {
+        //     "Environment": "[parameters('environment')]",
+        //     "Project": "[parameters('applicationName')]"
+        // }
     },
     "resources": [
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('storageName')]",
+            "name": "[variables('storageDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -224,13 +256,19 @@
                     },
                     "sku": {
                         "value": "[parameters('storageSKU')]"
+                    },
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "mediaContainerName": {
+                        "value": "[variables('mediaContainerName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('dbServiceName')]",
+            "name": "[variables('dbServiceDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -255,6 +293,12 @@
                     },
                     "sqlServerPassword": {
                         "value": "[parameters('dbAdministratorLoginPassword')]"
+                    },
+                    "sqlServerName":{
+                        "value": "[variables('dbServerName')]"
+                    },
+                    "sqlDbName":{
+                        "value": "[variables('dbName')]"
                     }
                 }
             }
@@ -283,7 +327,7 @@
         // },
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('appInsight')]",
+            "name": "[variables('appInsightDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -296,13 +340,16 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
+                    },
+                    "appInsightName":{
+                        "value": "[variables('appInsightName')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('boHostingPlanName')]",
+            "name": "[variables('boHostingPlanDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -328,7 +375,7 @@
         {            
             "condition": "[not(parameters('shareHostPlan'))]",
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('webHostingPlanName')]",
+            "name": "[variables('webHostingPlanDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -353,7 +400,7 @@
         },
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "cms-web-app",
+            "name": "[variables('boWebAppDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -374,22 +421,25 @@
                         "value": "[parameters('connectionStringName')]"
                     },
                     "connectionString": {
-                        "value": "[replace(reference(variables('dbServiceName')).outputs.connectionString.value, '{password}', parameters('dbAdministratorLoginPassword'))]"
+                        "value": "[concat('Server=tcp:', variables('dbServerName'), '.database.windows.net,1433;Initial Catalog=', variables('dbName'), ';Persist Security Info=False;User ID=', parameters('dbAdministratorLogin'), ';Password=', parameters('dbAdministratorLoginPassword') ,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
                     },
                     "hostingPlanName": {
-                        "value": "[reference(variables('boHostingPlanName')).outputs.hostingPlanName.value]"
+                        "value": "[variables('hostingPlanBOName')]"
                     },
-                    "appInsightsConnectionString": {
-                        "value": "[reference(resourceId('microsoft.insights/components/', reference(variables('appInsight')).outputs.name.value), reference(variables('appInsight')).outputs.apiVersion.value).ConnectionString]"
+                    "appInsightConnectionString": {
+                        "value": "[reference(variables('appInsightDeploymentName')).outputs.ConnectionString.value]"
                     },
                     "mediaBlobName": {
-                        "value": "[reference(variables('storageName')).outputs.mediaBlob.value]"
+                        "value": "[reference(variables('storageAccountName')).outputs.mediaBlob.value]"
                     },
-                    "mediaConnectionString": {
-                        "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', reference(variables('storageName')).outputs.name.value,';AccountKey=',listKeys(reference(variables('storageName')).outputs.name.value, reference(variables('storageName')).outputs.apiVersion.value).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                    "storageAccountName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "storageAccountApiVersion": {
+                        "value": "[reference(variables('storageAccountName')).outputs.apiVersion.value]"
                     },
                     "mediaContainerName": {
-                        "value": "[reference(variables('storageName')).outputs.mediaContainer.value]"
+                        "value": "[variables('mediaContainerName')]"
                     },
                     "umbracoVersion": {
                         "value": "[parameters('umbracoVersion')]"
@@ -397,10 +447,10 @@
                 }
             },
             "dependsOn": [
-                "[variables('storageName')]",
-                "[variables('appInsight')]",
-                "[variables('boHostingPlanName')]",
-                "[variables('dbServiceName')]"
+                "[variables('storageDeploymentName')]",
+                "[variables('appInsightDeploymentName')]",
+                "[variables('boHostingPlanDeploymentName')]",
+                "[variables('dbServiceDeploymentName')]"
             ]
         }
     ]

@@ -22,18 +22,23 @@
             "metadata": {
                 "description": "Storage Account type"
             }
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "mediaContainerName": {
+            "type": "string",
+            "defaultValue": "media"
         }
     },
     "variables": {
-        "apiVersion": "2022-09-01",
-        "storageAccountName": "[concat('st', toLower(replace(parameters('deploymentId'), '-', '')))]",
-        "mediaContainerName": "media"
+        "apiVersion": "2022-09-01"
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "[variables('apiVersion')]",
-            "name": "[variables('storageAccountName')]",
+            "name": "[parameters('storageAccountName')]",
             "location": "[parameters('location')]",
             "sku": {
                 "name": "[parameters('sku')]"
@@ -68,7 +73,7 @@
                     "apiVersion": "[variables('apiVersion')]",
                     "name": "default",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
                     ],
                     "properties": {
                         "changeFeed": {
@@ -92,13 +97,13 @@
                         {
                             "type": "containers",
                             "apiVersion": "[variables('apiVersion')]",
-                            "name": "[variables('mediaContainerName')]",
+                            "name": "[parameters('mediaContainerName')]",
                             "properties": {
                                 "publicAccess": "Container"
                             },
                             "dependsOn": [
-                                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]",
-                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]",
+                                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
                             ]
                         }
                     ]
@@ -109,23 +114,27 @@
     "outputs": {
         "name": {
             "type": "string",
-            "value": "[variables('storageAccountName')]"
+            "value": "[parameters('storageAccountName')]"
         },
         "apiVersion": {
             "type": "string",
             "value": "[variables('apiVersion')]"
         },
+        "resourceId": {
+            "type": "string",
+            "value": "[resourceId(reference(parameters('storageAccountName')).outputs.name.value, reference(parameters('storageAccountName')))]"
+        },
         "connectionString": {
             "type": "securestring",
-            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listKeys(variables('storageAccountName'), variables('apiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(parameters('storageAccountName'), variables('apiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
         },
         "mediaBlob": {
             "type": "string",
-            "value": "[reference(variables('storageAccountName')).primaryEndpoints.blob]"
+            "value": "[reference(parameters('storageAccountName')).primaryEndpoints.blob]"
         },
         "mediaContainer": {
             "type": "string",
-            "value": "[variables('mediaContainerName')]"
+            "value": "[parameters('mediaContainerName')]"
         }
     }
 }

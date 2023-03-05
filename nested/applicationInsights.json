@@ -9,21 +9,24 @@
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
+        },
+        "appInsightName": {
+            "type": "string",
+            "defaultValue": "[concat('appi', parameters('deploymentId'))]"
         }
     },
     "variables": {        
-        "apiVersion": "2020-02-02",
-        "appInsightName": "[concat('appi', parameters('deploymentId'))]"
+        "apiVersion": "2020-02-02"
     },
     "resources": [
         {
             "apiVersion": "[variables('apiVersion')]",
-            "name": "[variables('appInsightName')]",
+            "name": "[parameters('appInsightName')]",
             "type": "microsoft.insights/components",
             "location": "[parameters('location')]",
             "kind": "",
             "properties": {
-                "applicationId": "[variables('appInsightName')]",
+                "applicationId": "[parameters('appInsightName')]",
                 "Application_Type": "web"
             }
         }
@@ -31,17 +34,25 @@
     "outputs": {
         "name": {
             "type": "string",
-            "value": "[variables('appInsightName')]"
+            "value": "[parameters('appInsightName')]"
         },
         "apiVersion": {
             "type": "string",
             "value": "[variables('apiVersion')]"
+        },
+        "connectionString": {
+            "type": "string",
+            "value": "[reference(resourceId('microsoft.insights/components/', parameters('appInsightName')), variables('apiVersion')).ConnectionString]"
+        },
+        "InstrumentationKey": {
+            "type": "string",
+            "value": "[reference(resourceId('microsoft.insights/components/', parameters('appInsightName')), variables('apiVersion')).InstrumentationKey]"
+        },
+        "resource": {
+            "type": "object",
+            "value": "[reference(resourceId('microsoft.insights/components/', parameters('appInsightName')), variables('apiVersion'))]"
         }
         // ,
-        // "connectionString": {
-        //     "type": "securestring",
-        //     "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightName')), variables('apiVersion')).ConnectionString]"
-        // },
         // "resourceId": {
         //     "type": "securestring",
         //     "value": "[resourceId('microsoft.insights/components/', variables('appInsightName'))]"

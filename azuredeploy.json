@@ -430,13 +430,13 @@
                         "value": "[reference(variables('appInsightDeploymentName')).outputs.ConnectionString.value]"
                     },
                     "mediaBlobName": {
-                        "value": "[reference(variables('storageAccountName')).outputs.mediaBlob.value]"
+                        "value": "[reference(variables('storageDeploymentName')).outputs.mediaBlob.value]"
                     },
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"
                     },
                     "storageAccountApiVersion": {
-                        "value": "[reference(variables('storageAccountName')).outputs.apiVersion.value]"
+                        "value": "[reference(variables('storageDeploymentName')).outputs.apiVersion.value]"
                     },
                     "mediaContainerName": {
                         "value": "[variables('mediaContainerName')]"

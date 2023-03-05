@@ -428,7 +428,7 @@
                         "value": "[parameters('connectionStringName')]"
                     },
                     "connectionString": {
-                        "value": ""//"[concat('Server=tcp:', variables('dbServerName'), '.database.windows.net,1433;Initial Catalog=', variables('dbName'), ';Persist Security Info=False;User ID=', parameters('dbAdministratorLogin'), ';Password=', parameters('dbAdministratorLoginPassword') ,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+                        "value": "[concat('Server=tcp:', variables('dbServerName'), '.database.windows.net,1433;Initial Catalog=', variables('dbName'), ';Persist Security Info=False;User ID=', parameters('dbAdministratorLogin'), ';Password=', parameters('dbAdministratorLoginPassword') ,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
                     },
                     "hostingPlanName": {
                         "value": "[variables('hostingPlanBOName')]"

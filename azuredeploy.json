@@ -434,10 +434,10 @@
                         "value": "[variables('hostingPlanBOName')]"
                     },
                     "appInsightConnectionString": {
-                        "value": ""//"[reference(variables('appInsightDeploymentName')).outputs.ConnectionString.value]"
+                        "value": "[reference(variables('appInsightDeploymentName')).outputs.ConnectionString.value]"
                     },
                     "mediaBlobName": {
-                        "value": ""//"[reference(variables('storageDeploymentName')).outputs.mediaBlob.value]"
+                        "value": "[reference(variables('storageDeploymentName')).outputs.mediaBlob.value]"
                     },
                     "storageAccountName": {
                         "value": "[variables('storageAccountName')]"

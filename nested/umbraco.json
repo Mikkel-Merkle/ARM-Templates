@@ -121,6 +121,44 @@
                             "type": "SQLAzure"
                         }
                     ],
+                    "appSettings": [
+                        {
+                            "name": "My.Core.LoadBalancing.ServerRole",
+                            "value": "Replica"
+                        },
+                        {
+                            "name": "Umbraco.Core.ConfigurationStatus",
+                            "value": "[parameters('umbracoVersion')]"
+                        },
+                        {
+                            "name": "Umbraco.Core.MainDom.Lock",
+                            "value": "SqlMainDomLock"
+                        },
+                        {
+                            "name": "Umbraco.Core.LocalTempStorage",
+                            "value": "EnvironmentTemp"
+                        },
+                        {
+                            "name": "My.Azure.AI.InstrumentationConnectionString",
+                            "value": "[parameters('appInsightConnectionString')]"
+                        },
+                        {
+                            "name": "My.Azure.AI.Enabled",
+                            "value": "true"
+                        },
+                        {
+                            "name": "AzureBlobFileSystem.RootUrl:media",
+                            "value": "[parameters('mediaBlobName')]"
+                        },
+                        {
+                            "name": "AzureBlobFileSystem.ConnectionString:media",
+                            "value": ""//"[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'),';AccountKey=',listKeys(parameters('storageAccountName'), parameters('storageAccountApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                        },
+                        {
+                            "name": "AzureBlobFileSystem.ContainerName:media",
+                            "value": "[parameters('mediaContainerName')]"
+                        }
+                    ],
                     "numberOfWorkers": 1,
                     "acrUseManagedIdentityCreds": false,
                     // "alwaysOn": true,
@@ -128,44 +166,6 @@
                     "functionAppScaleLimit": 0,
                     "minimumElasticInstanceCount": 0
                 },
-                "appSettings": [
-                    {
-                        "name": "My.Core.LoadBalancing.ServerRole",
-                        "value": "Replica"
-                    },
-                    {
-                        "name": "Umbraco.Core.ConfigurationStatus",
-                        "value": "[parameters('umbracoVersion')]"
-                    },
-                    {
-                        "name": "Umbraco.Core.MainDom.Lock",
-                        "value": "SqlMainDomLock"
-                    },
-                    {
-                        "name": "Umbraco.Core.LocalTempStorage",
-                        "value": "EnvironmentTemp"
-                    },
-                    {
-                        "name": "My.Azure.AI.InstrumentationConnectionString",
-                        "value": "[parameters('appInsightConnectionString')]"
-                    },
-                    {
-                        "name": "My.Azure.AI.Enabled",
-                        "value": "true"
-                    },
-                    {
-                        "name": "AzureBlobFileSystem.RootUrl:media",
-                        "value": "[parameters('mediaBlobName')]"
-                    },
-                    {
-                        "name": "AzureBlobFileSystem.ConnectionString:media",
-                        "value": ""//"[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'),';AccountKey=',listKeys(parameters('storageAccountName'), parameters('storageAccountApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-                    },
-                    {
-                        "name": "AzureBlobFileSystem.ContainerName:media",
-                        "value": "[parameters('mediaContainerName')]"
-                    }
-                ],
                 "httpsOnly": true
                 // "keyVaultReferenceIdentity": "SystemAssigned"
             }
@@ -205,19 +205,10 @@
             "properties": {
                 "numberOfWorkers": 1,
                 "defaultDocuments": [
-                    "Default.htm",
-                    "Default.html",
-                    "Default.asp",
-                    "index.htm",
-                    "index.html",
-                    "iisstart.htm",
-                    "default.aspx",
-                    "index.php",
                     "hostingstart.html"
                 ],
-                "netFrameworkVersion": "v4.0",
+                "netFrameworkVersion": "v6.0",
                 "remoteDebuggingVersion": "VS2019",
-                "managedPipelineMode": "Integrated",
                 "virtualApplications": [
                     {
                         "virtualPath": "/",
@@ -228,7 +219,6 @@
                 "http20Enabled": true,
                 "minTlsVersion": "1.2",
                 "scmMinTlsVersion": "1.2",
-                "ftpsState": "Disabled",
                 "preWarmedInstanceCount": 0
             }
         },

@@ -397,61 +397,61 @@
                     }
                 }
             }
-        },
-        {
-            "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "[variables('boWebAppDeploymentName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "nested/umbraco.json"
-                },
-                "parameters": {
-                    "appName": {
-                        "value": "[variables('postFixName')]"
-                    },
-                    "deploymentId": {
-                        "value": "[variables('deploymentId')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "connectionStringName": {
-                        "value": "[parameters('connectionStringName')]"
-                    },
-                    "connectionString": {
-                        "value": "[concat('Server=tcp:', variables('dbServerName'), '.database.windows.net,1433;Initial Catalog=', variables('dbName'), ';Persist Security Info=False;User ID=', parameters('dbAdministratorLogin'), ';Password=', parameters('dbAdministratorLoginPassword') ,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
-                    },
-                    "hostingPlanName": {
-                        "value": "[variables('hostingPlanBOName')]"
-                    },
-                    "appInsightConnectionString": {
-                        "value": "[reference(variables('appInsightDeploymentName')).outputs.ConnectionString.value]"
-                    },
-                    "mediaBlobName": {
-                        "value": "[reference(variables('storageDeploymentName')).outputs.mediaBlob.value]"
-                    },
-                    "storageAccountName": {
-                        "value": "[variables('storageAccountName')]"
-                    },
-                    "storageAccountApiVersion": {
-                        "value": "[reference(variables('storageDeploymentName')).outputs.apiVersion.value]"
-                    },
-                    "mediaContainerName": {
-                        "value": "[variables('mediaContainerName')]"
-                    },
-                    "umbracoVersion": {
-                        "value": "[parameters('umbracoVersion')]"
-                    }
-                }
-            },
-            "dependsOn": [
-                "[variables('storageDeploymentName')]",
-                "[variables('appInsightDeploymentName')]",
-                "[variables('boHostingPlanDeploymentName')]",
-                "[variables('dbServiceDeploymentName')]"
-            ]
-        }
+        }//,
+        // {
+        //     "apiVersion": "[variables('resourcesApiVersion')]",
+        //     "name": "[variables('boWebAppDeploymentName')]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "relativePath": "nested/umbraco.json"
+        //         },
+        //         "parameters": {
+        //             "appName": {
+        //                 "value": "[variables('postFixName')]"
+        //             },
+        //             "deploymentId": {
+        //                 "value": "[variables('deploymentId')]"
+        //             },
+        //             "location": {
+        //                 "value": "[parameters('location')]"
+        //             },
+        //             "connectionStringName": {
+        //                 "value": "[parameters('connectionStringName')]"
+        //             },
+        //             "connectionString": {
+        //                 "value": "[concat('Server=tcp:', variables('dbServerName'), '.database.windows.net,1433;Initial Catalog=', variables('dbName'), ';Persist Security Info=False;User ID=', parameters('dbAdministratorLogin'), ';Password=', parameters('dbAdministratorLoginPassword') ,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+        //             },
+        //             "hostingPlanName": {
+        //                 "value": "[variables('hostingPlanBOName')]"
+        //             },
+        //             "appInsightConnectionString": {
+        //                 "value": "[reference(variables('appInsightDeploymentName')).outputs.ConnectionString.value]"
+        //             },
+        //             "mediaBlobName": {
+        //                 "value": "[reference(variables('storageDeploymentName')).outputs.mediaBlob.value]"
+        //             },
+        //             "storageAccountName": {
+        //                 "value": "[variables('storageAccountName')]"
+        //             },
+        //             "storageAccountApiVersion": {
+        //                 "value": "[reference(variables('storageDeploymentName')).outputs.apiVersion.value]"
+        //             },
+        //             "mediaContainerName": {
+        //                 "value": "[variables('mediaContainerName')]"
+        //             },
+        //             "umbracoVersion": {
+        //                 "value": "[parameters('umbracoVersion')]"
+        //             }
+        //         }
+        //     },
+        //     "dependsOn": [
+        //         "[variables('storageDeploymentName')]",
+        //         "[variables('appInsightDeploymentName')]",
+        //         "[variables('boHostingPlanDeploymentName')]",
+        //         "[variables('dbServiceDeploymentName')]"
+        //     ]
+        // }
     ]
 }

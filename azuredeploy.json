@@ -440,10 +440,10 @@
                         "value": ""//"[reference(variables('storageDeploymentName')).outputs.mediaBlob.value]"
                     },
                     "storageAccountName": {
-                        "value": ""//"[variables('storageAccountName')]"
+                        "value": "[variables('storageAccountName')]"
                     },
                     "storageAccountApiVersion": {
-                        "value": ""//"[reference(variables('storageDeploymentName')).outputs.apiVersion.value]"
+                        "value": "[reference(variables('storageDeploymentName')).outputs.apiVersion.value]"
                     },
                     "mediaContainerName": {
                         "value": "[variables('mediaContainerName')]"

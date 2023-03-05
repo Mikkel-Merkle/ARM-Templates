@@ -42,12 +42,18 @@
         "sqlServerVersion": {
             "type": "string",
             "defaultValue": "12.0"
+        },
+        "sqlServerName": {
+            "type": "string",
+            "defaultValue": "[concat('sql', parameters('deploymentId'))]"
+        },        
+        "sqlDbName": {
+            "type": "string",
+            "defaultValue": "[concat('sqldb',parameters('deploymentId'), '-', parameters('dbName'))]"
         }
     },
     "variables": {
-        "dbApiVersion": "2022-02-01-preview",
-        "sqlServerName": "[concat('sql', parameters('deploymentId'))]",
-        "sqlDbName": "[concat('sqldb',parameters('deploymentId'), '-', parameters('dbName'))]"
+        "dbApiVersion": "2022-02-01-preview"
     },
     "resources": [
         {
@@ -58,7 +64,7 @@
             "administratorLoginPassword": "[parameters('sqlServerPassword')]",
             "version": "[parameters('sqlServerVersion')]"
         },
-        "name": "[variables('sqlServerName')]",
+        "name": "[parameters('sqlServerName')]",
         "location": "[parameters('location')]",
         "resources": [
             {
@@ -69,25 +75,25 @@
                 "startIpAddress": "0.0.0.0"
             },
             "name": "AllowAllAzureIps",
-            "dependsOn": [ "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]" ]
+            "dependsOn": [ "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]" ]
             }
         ]
         },
         {
             "type": "Microsoft.Sql/servers/databases",
             "apiVersion": "[variables('dbApiVersion')]",
-            "name": "[concat(variables('sqlServerName'), '/',variables('sqlDbName'))]",
+            "name": "[concat(parameters('sqlServerName'), '/',parameters('sqlDbName'))]",
             "location": "[parameters('location')]",
             "sku": {
                 "name": "[parameters('sku')]"
             },
-            "dependsOn": [ "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]" ]
+            "dependsOn": [ "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]" ]
         }
     ],
     "outputs": {
         "connectionString": {
             "type": "string",
-            "value":"[concat('Server=tcp:', variables('sqlServerName'), '.database.windows.net,1433;Initial Catalog=', variables('sqlDbName'), ';Persist Security Info=False;User ID=', parameters('sqlServerLogin'), ';Password={password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+            "value":"[concat('Server=tcp:', parameters('sqlServerName'), '.database.windows.net,1433;Initial Catalog=', parameters('sqlDbName'), ';Persist Security Info=False;User ID=', parameters('sqlServerLogin'), ';Password={password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
         }        
     }
 }

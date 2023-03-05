@@ -120,10 +120,10 @@
             "type": "string",
             "value": "[variables('apiVersion')]"
         },
-        "resourceId": {
-            "type": "string",
-            "value": "[resourceId(reference(parameters('storageAccountName')).outputs.name.value, reference(parameters('storageAccountName')))]"
-        },
+        // "resourceId": {
+        //     "type": "string",
+        //     "value": "[resourceId(reference(parameters('storageAccountName')).outputs.name.value, reference(parameters('storageAccountName')))]"
+        // },
         "connectionString": {
             "type": "securestring",
             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(parameters('storageAccountName'), variables('apiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"

@@ -159,7 +159,7 @@
                     },
                     {
                         "name": "AzureBlobFileSystem.ConnectionString:media",
-                        "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'),';AccountKey=',listKeys(parameters('storageAccountName'), parameters('storageAccountApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                        "value": ""//"[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'),';AccountKey=',listKeys(parameters('storageAccountName'), parameters('storageAccountApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
                     },
                     {
                         "name": "AzureBlobFileSystem.ContainerName:media",
